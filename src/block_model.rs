@@ -66,7 +66,7 @@ struct RawModelElement {
 
 #[derive(Serialize, Deserialize, Debug, ModelMerge, Clone)]
 pub struct RawBlockModel {
-    parent: Option<String>,
+    pub parent: Option<String>,
     display: Option<RawModelDisplay>,
     ambientocclusion: Option<bool>,
     gui_light: Option<String>,

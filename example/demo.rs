@@ -15,15 +15,15 @@ fn main() {
 
     println!("loaded models: {}", model_manager.get_models().len());
 
-    println!("{:#?}", model_manager.get_models().keys());
+    // println!("{:#?}", model_manager.get_models().keys());
 
-    let mut cube_model = model_manager.get_models().get("minecraft:block/cube").unwrap().clone();
-    let block_model = model_manager.get_models().get("minecraft:block/block").unwrap();
+    let cube_model = model_manager.get_models().get("minecraft:block/furnace").unwrap();
+    // let block_model = model_manager.get_models().get("minecraft:block/block").unwrap();
 
     
-    println!("cube: \n{:#?}", cube_model);
-    println!("block: \n{:#?}", block_model);
+    println!("furnace: \n{:#?}", cube_model);
+    // println!("block: \n{:#?}", block_model);
 
-    cube_model.merge(&block_model);
-    println!("merge: \n{:#?}", cube_model);
+    // cube_model.merge(&block_model);
+    // println!("merge: \n{:#?}", cube_model);
 }
