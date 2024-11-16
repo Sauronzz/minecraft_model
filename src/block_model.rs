@@ -1,25 +1,26 @@
+use model_merge_derive::ModelMerge;
+use model_merge::ModelMerge;
 use serde::{Deserialize, Serialize};
 
-
-#[derive(Serialize, Deserialize, Debug)]
-struct ModelTransform {
+#[derive(Serialize, Deserialize, Debug, ModelMerge, Clone)]
+struct RawModelTransform {
     scale: Option<[f32; 3]>,
     rotation: Option<[f32; 3]>,
     translation: Option<[f32; 3]>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-struct ModelDisplay {
-    gui: Option<ModelTransform>,
-    ground: Option<ModelTransform>,
-    fixed: Option<ModelTransform>,
-    thirdperson_righthand: Option<ModelTransform>,
-    firstperson_righthand: Option<ModelTransform>,
-    firstperson_lefthand: Option<ModelTransform>,
+#[derive(Serialize, Deserialize, Debug, ModelMerge, Clone)]
+struct RawModelDisplay {
+    gui: Option<RawModelTransform>,
+    ground: Option<RawModelTransform>,
+    fixed: Option<RawModelTransform>,
+    thirdperson_righthand: Option<RawModelTransform>,
+    firstperson_righthand: Option<RawModelTransform>,
+    firstperson_lefthand: Option<RawModelTransform>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-struct ModelTexture {
+#[derive(Serialize, Deserialize, Debug, ModelMerge, Clone)]
+struct RawModelTexture {
     particle: Option<String>,
     bottom: Option<String>,
     top: Option<String>,
@@ -27,48 +28,49 @@ struct ModelTexture {
     overlay: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-struct ModelElementRotation {
-    origin: [i32; 3],
+#[derive(Serialize, Deserialize, Debug, ModelMerge, Clone)]
+struct RawModelElementRotation {
+    origin: [f32; 3],
     axis: String,
     angle: f32,
     rescale: Option<bool>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-struct ModelFaceAttr {
-    uv: Option<[i32; 4]>,
+#[derive(Serialize, Deserialize, Debug, ModelMerge, Clone)]
+struct RawModelFaceAttr {
+    uv: Option<[f32; 4]>,
     texture: String,
-    tintindex: Option<i32>,
-    rotation: Option<i32>,
+    tintindex: Option<f32>,
+    rotation: Option<f32>,
     cullface: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-struct ModelFaces {
-    down: Option<ModelFaceAttr>,
-    up: Option<ModelFaceAttr>,
-    north: Option<ModelFaceAttr>,
-    south: Option<ModelFaceAttr>,
-    west: Option<ModelFaceAttr>,
-    east: Option<ModelFaceAttr>,
+#[derive(Serialize, Deserialize, Debug, ModelMerge, Clone)]
+struct RawModelFaces {
+    down: Option<RawModelFaceAttr>,
+    up: Option<RawModelFaceAttr>,
+    north: Option<RawModelFaceAttr>,
+    south: Option<RawModelFaceAttr>,
+    west: Option<RawModelFaceAttr>,
+    east: Option<RawModelFaceAttr>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-struct ModelElement {
+#[derive(Serialize, Deserialize, Debug, ModelMerge, Clone)]
+struct RawModelElement {
     shade: Option<bool>,
-    rotation: Option<ModelElementRotation>,
+    rotation: Option<RawModelElementRotation>,
     from: [f32; 3],
     to: [f32; 3],
-    faces: ModelFaces,
+    faces: RawModelFaces,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct BlockModel {
-    display: Option<ModelDisplay>,
+#[derive(Serialize, Deserialize, Debug, ModelMerge, Clone)]
+pub struct RawBlockModel {
+    parent: Option<String>,
+    display: Option<RawModelDisplay>,
     ambientocclusion: Option<bool>,
     gui_light: Option<String>,
-    textures: Option<ModelTexture>,
-    elements: Option<Vec<ModelElement>>,
+    textures: Option<RawModelTexture>,
+    elements: Option<Vec<RawModelElement>>,
     // overrides: Vec<>
 }

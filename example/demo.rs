@@ -1,19 +1,29 @@
-use std::fs;
-
-use minecraft_model::block_model::BlockModel;
+use minecraft_model::ModelManager;
 use structopt::StructOpt;
+use model_merge::ModelMerge;
 
 #[derive(StructOpt)]
 struct Cli {
     #[structopt(parse(from_os_str))]
-    file_path: std::path::PathBuf
+    assets_path: std::path::PathBuf
 }
 
 fn main() {
     let args = Cli::from_args();
 
-    let model_json = fs::read_to_string(args.file_path).unwrap();
+    let model_manager = ModelManager::from_dir(args.assets_path).unwrap();
 
-    let model: BlockModel = serde_json::from_str(&model_json).unwrap();
-    println!("{:#?}", model);
+    println!("loaded models: {}", model_manager.get_models().len());
+
+    println!("{:#?}", model_manager.get_models().keys());
+
+    let mut cube_model = model_manager.get_models().get("minecraft:block/cube").unwrap().clone();
+    let block_model = model_manager.get_models().get("minecraft:block/block").unwrap();
+
+    
+    println!("cube: \n{:#?}", cube_model);
+    println!("block: \n{:#?}", block_model);
+
+    cube_model.merge(&block_model);
+    println!("merge: \n{:#?}", cube_model);
 }
