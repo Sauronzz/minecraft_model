@@ -14,10 +14,18 @@ pub struct ModelManager {
 
 impl ModelManager {
 
+    fn format_model_parent(model: &mut RawBlockModel) {
+        if let Some(parent_name) = &mut model.parent {
+            if !parent_name.starts_with("minecraft") {
+                let model_name = parent_name.split('/').last().unwrap();
+                *parent_name = format!("minecraft:block/{}", model_name);
+            }
+        }
+    }
+
     fn load_complete_model(models: &mut BTreeMap<String, RawBlockModel>, model_name: &str, models_dir: &PathBuf) -> Result<RawBlockModel> {
         let mut model_path = models_dir.clone();
         model_path.push(format!("{}.json", model_name));
-        // println!("try load {:?}", model_path);
 
         let mut incomplete_model: RawBlockModel = serde_json::from_str(&fs::read_to_string(model_path)?)?;
         
@@ -26,8 +34,9 @@ impl ModelManager {
                 incomplete_model.merge(parent_model);
             } else {
                 let parent_name = parent.split('/').last().unwrap();
-                let parent_model = ModelManager::load_complete_model(models, parent_name, models_dir)?;
+                let mut parent_model = ModelManager::load_complete_model(models, parent_name, models_dir)?;
                 incomplete_model.merge(&parent_model);
+                ModelManager::format_model_parent(&mut parent_model);
                 models.insert(format!("minecraft:block/{}", parent_name), parent_model);
             }
         }
@@ -50,12 +59,8 @@ impl ModelManager {
                 continue;
             }
 
-            // if file_name != "minecraft:block/grass_block_snow" {
-            //     continue;
-            // }
-
-            let model = ModelManager::load_complete_model(&mut models, &model_path.file_stem().unwrap().to_string_lossy(), &blocks)?;
-
+            let mut model = ModelManager::load_complete_model(&mut models, &model_path.file_stem().unwrap().to_string_lossy(), &blocks)?;
+            ModelManager::format_model_parent(&mut model);
             models.insert(file_name, model);
         }
 
@@ -73,5 +78,18 @@ impl ModelManager {
     pub fn output(&self) -> Result<()> {
 
         Ok(())
+    }
+
+    pub fn get_model_top_parent(&self, model_name: &str) -> Option<String> {
+
+        let mut model: &RawBlockModel = self.models.get(model_name)?;
+        let mut top_parent = model_name;
+
+        while let Some(parent_name) = &model.parent {
+            top_parent = parent_name;
+            model = self.models.get(parent_name)?;
+        }
+
+        Some(top_parent.to_string())
     }
 }
